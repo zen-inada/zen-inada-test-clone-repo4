@@ -76,6 +76,17 @@ def get_move(board):
         if simulate_move(x, y, enemy):
             return (x, y)
 
-    # ③ 中央優先戦略（2,1）や (1,2)
-    center_pref = sorted(legal_moves, key=lambda mv: abs(mv[0]-1.5) + abs(mv[1]-1.5))
+        # ③ まずは序盤だけ四隅優先 → なければ中央寄り
+    total = count1 + count2
+    corners = [(0, 0), (0, 3), (3, 0), (3, 3)]
+
+    # 序盤の閾値はお好みで（例: 8 手未満＝最初の4手ずつ）
+    if total < 8:
+        for x, y in corners:  # ランダムにしたいなら random.sample(corners, len(corners))
+            if get_top_z(x, y) != -1:
+                return (x, y)
+
+    # 角が埋まっている/序盤を過ぎたら中央優先
+    center_pref = sorted(legal_moves, key=lambda mv: abs(mv[0] - 1.5) + abs(mv[1] - 1.5))
     return center_pref[0]
+
